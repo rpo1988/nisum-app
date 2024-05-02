@@ -1,0 +1,91 @@
+<div class="container" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
+  <form [formGroup]="form" (submit)="onSaveClicked()" class="form">
+    <div class="row">
+      <mat-form-field class="col-6">
+        <mat-label>First name</mat-label>
+        <input
+          formControlName="firstName"
+          matInput
+          cdkFocusInitial
+          placeholder="Ex. Rodrigo"
+        />
+        @if (form.controls.firstName.hasError('required')) {
+        <mat-error>This field is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="col-6">
+        <mat-label>Last name</mat-label>
+        <input formControlName="lastName" matInput placeholder="Ex. Ortega" />
+        @if (form.controls.lastName.hasError('required')) {
+        <mat-error>This field is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field class="col-6">
+        <mat-label>Email</mat-label>
+        <input
+          formControlName="email"
+          matInput
+          type="email"
+          placeholder="Ex. rortega@gmail.com"
+        />
+        @if (form.controls.email.hasError('email') &&
+        !form.controls.email.hasError('required')) {
+        <mat-error>Please enter a valid email address</mat-error>
+        } @if (form.controls.email.hasError('required')) {
+        <mat-error>This field is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="col-6">
+        <mat-label>Date of birth</mat-label>
+        <input
+          formControlName="dob"
+          matInput
+          type="date"
+          placeholder="Ex. 01/02/1930"
+        />
+        @if (form.controls.dob.hasError('required')) {
+        <mat-error>This field is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field class="col-6">
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender" placeholder="Ex. Female">
+          <mat-option [value]="null"></mat-option>
+          <mat-option value="female">Female</mat-option>
+          <mat-option value="male">Male</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="col-6">
+        <mat-label>Mobile number</mat-label>
+        <input
+          formControlName="cell"
+          matInput
+          placeholder="Ex. +56 970 123 456"
+        />
+      </mat-form-field>
+    </div>
+
+    <div class="actions">
+      <button type="button" mat-button (click)="onCancelClicked()">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        [disabled]="form.invalid"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+</div>

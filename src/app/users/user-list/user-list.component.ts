@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -13,9 +14,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { InfoDialogComponent, InfoDialogConfig } from '../../shared/components/info-dialog/info-dialog.component';
+import { RoutePath } from '../../app.routes';
+import {
+  InfoDialogComponent,
+  InfoDialogConfig,
+} from '../../shared/components/info-dialog/info-dialog.component';
 import { CapitalizePipe } from '../../shared/pipes/capitalize.pipe';
 import { FullnamePipe } from '../../shared/pipes/fullname.pipe';
 import { UnsubscribeService } from '../../shared/services/unsubscribe.service';
@@ -34,6 +40,7 @@ import { UsersService } from '../users.service';
     MatIconButton,
     MatIconModule,
     MatMenuModule,
+    A11yModule
   ],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
@@ -58,48 +65,61 @@ export class UserListComponent implements OnInit, OnDestroy {
   private _hostDestroyed$: Subject<void> = new Subject();
 
   constructor(
-    private dialog: MatDialog,
-    private cd: ChangeDetectorRef,
-    private usersService: UsersService,
-    private unsubscribeService: UnsubscribeService
+    private _router: Router,
+    private _dialog: MatDialog,
+    private _cd: ChangeDetectorRef,
+    private _usersService: UsersService,
+    private _unsubscribeService: UnsubscribeService
   ) {}
 
   ngOnInit(): void {
-    this.usersService
-      .getUsers(true)
+    this._usersService
+      .getUsers()
       .pipe(takeUntil(this._hostDestroyed$))
       .subscribe((response) => {
         this.dataSource = new MatTableDataSource<User>(response!);
         this.isLoading = false;
-        this.cd.detectChanges();
+        this._cd.detectChanges();
 
         this.dataSource.paginator = this.paginator;
-        this.cd.markForCheck();
+        this._cd.markForCheck();
       });
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeService.unsubscribe(this._hostDestroyed$);
+    this._unsubscribeService.unsubscribe(this._hostDestroyed$);
+  }
+
+  onEditClicked(selectedUser: User): void {
+    this.isLoading = true;
+    this._cd.markForCheck();
+    this._router.navigateByUrl(
+      `/${RoutePath.EDIT.replace(':id', selectedUser.login.uuid)}`
+    );
   }
 
   onDeleteClicked(selectedUser: User): void {
-    this.dialog
+    this._dialog
       .open<InfoDialogComponent, InfoDialogConfig>(InfoDialogComponent, {
         data: {
           title: 'Delete confirmation',
-          description: 'Are you sure you want to delete this user? This action cannot be undone.',
+          description:
+            'Are you sure you want to delete this user? This action cannot be undone.',
           cancelButton: 'Cancel',
           confirmButton: 'Delete',
-          confirmButtonColor: 'warn'
+          confirmButtonColor: 'warn',
         },
-        width: '540px'
+        width: '540px',
       })
       .afterClosed()
       .pipe(takeUntil(this._hostDestroyed$))
       .subscribe((event) => {
         if (event) {
-          this.dataSource.data = this.dataSource.data.filter(item => item.id !== selectedUser.id);
-          this.cd.markForCheck();
+          this.dataSource.data = this.dataSource.data.filter(
+            (item) => item.login.uuid !== selectedUser.login.uuid
+          );
+          this._usersService.deleteUser(selectedUser.login.uuid);
+          this._cd.markForCheck();
         }
       });
   }

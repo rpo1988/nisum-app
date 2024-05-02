@@ -11,15 +11,18 @@ import { User, UsersResponse } from './users';
 })
 export class UsersService {
   private _url: string =
-    'https://randomuser.me/api?seed=rpo-nisum&results=100&page=1&exc=registered';
+    'https://randomuser.me/api?seed=rpo-nisum&results=100&page=1&inc=gender,name,email,dob,cell,login';
 
   constructor(
     private _http: HttpClient,
     private _localStorageService: LocalStorageService
   ) {}
 
-  getUsers(force: boolean): Observable<User[] | null> {
-    if (force) {
+  getUsers(): Observable<User[] | null> {
+    const previous = this._localStorageService.getItem<User[]>(
+      LocalStorageKey.USERS
+    );
+    if (!previous) {
       return this._http.get<UsersResponse>(this._url).pipe(
         map((response) => {
           this._localStorageService.setItem(
@@ -31,6 +34,43 @@ export class UsersService {
       );
     }
 
-    return of(this._localStorageService.getItem<User[]>(LocalStorageKey.USERS));
+    return of(previous);
+  }
+
+  getUserById(uuid: string): Observable<User | null> {
+    return this.getUsers().pipe(
+      map((users) => users?.find((user) => user.login.uuid === uuid) || null)
+    );
+  }
+
+  deleteUser(uuid: string): Observable<User | null> {
+    const users = this._localStorageService.getItem<User[]>(
+      LocalStorageKey.USERS
+    );
+    const userIndex = users?.findIndex((user) => user.login.uuid === uuid);
+    let removedUser: User | null = null;
+    if (users && typeof userIndex === 'number' && userIndex > -1) {
+      removedUser = users.splice(userIndex, 1)[0];
+      this._localStorageService.setItem(
+        LocalStorageKey.USERS,
+        users
+      );
+    }
+    return of(removedUser);
+  }
+
+  updateUser(updatedUser: User): Observable<User | null> {
+    const users = this._localStorageService.getItem<User[]>(
+      LocalStorageKey.USERS
+    );
+    const userIndex = users?.findIndex((user) => user.login.uuid === updatedUser.login.uuid);
+    if (users && typeof userIndex === 'number' && userIndex > -1) {
+      users[userIndex] = updatedUser;
+      this._localStorageService.setItem(
+        LocalStorageKey.USERS,
+        users
+      );
+    }
+    return of(updatedUser);
   }
 }

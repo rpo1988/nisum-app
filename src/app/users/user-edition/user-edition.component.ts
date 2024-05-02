@@ -16,10 +16,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs';
-
 import { EMPTY, catchError } from 'rxjs';
+
 import { User, UserGender } from '../users';
 import { UsersService } from '../users.service';
 
@@ -66,6 +67,7 @@ export class UserEditionComponent implements OnInit {
     private _router: Router,
     private _cd: ChangeDetectorRef,
     private _route: ActivatedRoute,
+    private _snackBar: MatSnackBar,
     private _usersService: UsersService
   ) {
     this._originUser = this._route.snapshot.data['user'] || null;
@@ -108,12 +110,24 @@ export class UserEditionComponent implements OnInit {
       .pipe(
         catchError(() => {
           this.isLoading = false;
+          this._snackBar.open(
+            `An unexpected error occured ${
+              this.isEdition ? 'updating' : 'creating'
+            } the user.`,
+            'Close'
+          );
           this._cd.markForCheck();
-          // TODO: Show notification error
           return EMPTY;
         })
       )
       .subscribe(() => {
+        this._snackBar.open(
+          `User ${this.isEdition ? 'updated' : 'created'} successfully.`,
+          'Close',
+          {
+            duration: 5000,
+          }
+        );
         this._router.navigate(['..']);
       });
   }

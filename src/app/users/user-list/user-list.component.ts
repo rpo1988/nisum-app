@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -42,7 +42,6 @@ import { UsersService } from '../users.service';
     MatMenuModule,
     A11yModule,
     MatButtonModule,
-    MatDividerModule
   ],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
@@ -70,6 +69,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef,
+    private _snackBar: MatSnackBar,
     private _usersService: UsersService,
     private _unsubscribeService: UnsubscribeService
   ) {}
@@ -127,6 +127,9 @@ export class UserListComponent implements OnInit, OnDestroy {
             (item) => item.login?.uuid !== selectedUser.login?.uuid
           );
           this._usersService.deleteUser(selectedUser.login?.uuid!);
+          this._snackBar.open('User deleted successfully.', 'Close', {
+            duration: 5000,
+          });
           this._cd.markForCheck();
         }
       });

@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ config.title }}</h2>
+<mat-dialog-content>
+  <p>{{ config.description }}</p>
+</mat-dialog-content>
+<mat-dialog-actions [align]="'end'">
+  <button mat-button (click)="onCancelClicked()" cdkFocusInitial>
+    {{ config.cancelButton }}
+  </button>
+  <button
+    mat-button
+    [color]="config.confirmButtonColor"
+    (click)="onConfirmClicked()"
+  >
+    {{ config.confirmButton }}
+  </button>
+</mat-dialog-actions>

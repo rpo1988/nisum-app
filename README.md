@@ -14,6 +14,10 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## Deploy
+
+This project is ready to be deployed on Github pages. To do so, simply run `npm run deploy` after having built it. Once the deployment has finished, you can visit it [here](https://rpo1988.github.io/nisum-app).
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

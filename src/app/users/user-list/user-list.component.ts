@@ -7,12 +7,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -36,11 +37,12 @@ import { UsersService } from '../users.service';
     MatPaginatorModule,
     FullnamePipe,
     CapitalizePipe,
-    MatProgressSpinner,
-    MatIconButton,
+    MatProgressSpinnerModule,
     MatIconModule,
     MatMenuModule,
-    A11yModule
+    A11yModule,
+    MatButtonModule,
+    MatDividerModule
   ],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
@@ -90,11 +92,17 @@ export class UserListComponent implements OnInit, OnDestroy {
     this._unsubscribeService.unsubscribe(this._hostDestroyed$);
   }
 
+  onCreateClicked(): void {
+    this.isLoading = true;
+    this._cd.markForCheck();
+    this._router.navigateByUrl(`/${RoutePath.CREATE}`);
+  }
+
   onEditClicked(selectedUser: User): void {
     this.isLoading = true;
     this._cd.markForCheck();
     this._router.navigateByUrl(
-      `/${RoutePath.EDIT.replace(':id', selectedUser.login.uuid)}`
+      `/${RoutePath.EDIT.replace(':id', selectedUser.login?.uuid!)}`
     );
   }
 
@@ -116,9 +124,9 @@ export class UserListComponent implements OnInit, OnDestroy {
       .subscribe((event) => {
         if (event) {
           this.dataSource.data = this.dataSource.data.filter(
-            (item) => item.login.uuid !== selectedUser.login.uuid
+            (item) => item.login?.uuid !== selectedUser.login?.uuid
           );
-          this._usersService.deleteUser(selectedUser.login.uuid);
+          this._usersService.deleteUser(selectedUser.login?.uuid!);
           this._cd.markForCheck();
         }
       });

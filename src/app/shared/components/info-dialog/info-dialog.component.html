@@ -2,12 +2,12 @@
 <mat-dialog-content>
   <p>{{ config.description }}</p>
 </mat-dialog-content>
-<mat-dialog-actions [align]="'end'">
+<mat-dialog-actions class="actions" [align]="'end'">
   <button mat-button (click)="onCancelClicked()" cdkFocusInitial>
     {{ config.cancelButton }}
   </button>
   <button
-    mat-button
+    mat-flat-button
     [color]="config.confirmButtonColor"
     (click)="onConfirmClicked()"
   >

@@ -4,62 +4,72 @@
     <mat-spinner [diameter]="50"></mat-spinner>
   </div>
   } @else {
-  <table mat-table [dataSource]="dataSource">
-    <!-- Fullname Column -->
-    <ng-container matColumnDef="fullname">
-      <th mat-header-cell *matHeaderCellDef>Fullname</th>
-      <td mat-cell *matCellDef="let element">{{ element | fullname }}</td>
-    </ng-container>
+  <div class="subheader">
+    <h2>User list</h2>
+    <button mat-flat-button color="primary" (click)="onCreateClicked()">
+      Create User
+    </button>
+  </div>
 
-    <!-- Age Column -->
-    <ng-container matColumnDef="age">
-      <th mat-header-cell *matHeaderCellDef>Age</th>
-      <td mat-cell *matCellDef="let element">{{ element.dob.age }}</td>
-    </ng-container>
+  <div class="content">
+    <div class="scrollable">
+      <table mat-table [dataSource]="dataSource">
+        <!-- Fullname Column -->
+        <ng-container matColumnDef="fullname">
+          <th mat-header-cell *matHeaderCellDef>Fullname</th>
+          <td mat-cell *matCellDef="let element">{{ element | fullname }}</td>
+        </ng-container>
 
-    <!-- Email Column -->
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let element">{{ element.email }}</td>
-    </ng-container>
+        <!-- Age Column -->
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef>Age</th>
+          <td mat-cell *matCellDef="let element">{{ element.dob.age }}</td>
+        </ng-container>
 
-    <!-- Gender Column -->
-    <ng-container matColumnDef="gender">
-      <th mat-header-cell *matHeaderCellDef>Gender</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.gender | capitalize }}
-      </td>
-    </ng-container>
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+        </ng-container>
 
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let element">
-        <button
-          mat-icon-button
-          [matMenuTriggerFor]="menu"
-          aria-label="More actions button"
-        >
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="onEditClicked(element)">
-            <mat-icon>edit</mat-icon>
-            <span>Edit</span>
-          </button>
-          <button mat-menu-item (click)="onDeleteClicked(element)">
-            <mat-icon color="warn">delete</mat-icon>
-            <span>Delete</span>
-          </button>
-        </mat-menu>
-      </td>
-    </ng-container>
+        <!-- Gender Column -->
+        <ng-container matColumnDef="gender">
+          <th mat-header-cell *matHeaderCellDef>Gender</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.gender | capitalize }}
+          </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              aria-label="More actions button"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="onEditClicked(element)">
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+              </button>
+              <button mat-menu-item (click)="onDeleteClicked(element)">
+                <mat-icon color="warn">delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
 
-  <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
-  </mat-paginator>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+    </mat-paginator>
+  </div>
   }
 </div>

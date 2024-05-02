@@ -1,7 +1,16 @@
 <div class="container" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
-  <form [formGroup]="form" (submit)="onSaveClicked()" class="form">
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
+  } @else {
+  <div class="subheader">
+    <h2>{{ isEdition ? "User edition" : "User creation" }}</h2>
+  </div>
+
+  <form [formGroup]="form" (submit)="onConfirmClicked()" class="content form">
     <div class="row">
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>First name</mat-label>
         <input
           formControlName="firstName"
@@ -14,7 +23,7 @@
         }
       </mat-form-field>
 
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>Last name</mat-label>
         <input formControlName="lastName" matInput placeholder="Ex. Ortega" />
         @if (form.controls.lastName.hasError('required')) {
@@ -24,7 +33,7 @@
     </div>
 
     <div class="row">
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>Email</mat-label>
         <input
           formControlName="email"
@@ -40,14 +49,9 @@
         }
       </mat-form-field>
 
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>Date of birth</mat-label>
-        <input
-          formControlName="dob"
-          matInput
-          type="date"
-          placeholder="Ex. 01/02/1930"
-        />
+        <input formControlName="dob" matInput type="date" />
         @if (form.controls.dob.hasError('required')) {
         <mat-error>This field is <strong>required</strong></mat-error>
         }
@@ -55,7 +59,7 @@
     </div>
 
     <div class="row">
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>Gender</mat-label>
         <mat-select formControlName="gender" placeholder="Ex. Female">
           <mat-option [value]="null"></mat-option>
@@ -64,7 +68,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="col-6">
+      <mat-form-field class="col-sm-6">
         <mat-label>Mobile number</mat-label>
         <input
           formControlName="cell"
@@ -84,8 +88,9 @@
         color="primary"
         [disabled]="form.invalid"
       >
-        Save
+        {{ isEdition ? "Update" : "Create" }}
       </button>
     </div>
   </form>
+  }
 </div>

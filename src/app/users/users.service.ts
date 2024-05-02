@@ -39,7 +39,7 @@ export class UsersService {
 
   getUserById(uuid: string): Observable<User | null> {
     return this.getUsers().pipe(
-      map((users) => users?.find((user) => user.login.uuid === uuid) || null)
+      map((users) => users?.find((user) => user.login?.uuid === uuid) || null)
     );
   }
 
@@ -47,14 +47,11 @@ export class UsersService {
     const users = this._localStorageService.getItem<User[]>(
       LocalStorageKey.USERS
     );
-    const userIndex = users?.findIndex((user) => user.login.uuid === uuid);
+    const userIndex = users?.findIndex((user) => user.login?.uuid === uuid);
     let removedUser: User | null = null;
     if (users && typeof userIndex === 'number' && userIndex > -1) {
       removedUser = users.splice(userIndex, 1)[0];
-      this._localStorageService.setItem(
-        LocalStorageKey.USERS,
-        users
-      );
+      this._localStorageService.setItem(LocalStorageKey.USERS, users);
     }
     return of(removedUser);
   }
@@ -63,14 +60,22 @@ export class UsersService {
     const users = this._localStorageService.getItem<User[]>(
       LocalStorageKey.USERS
     );
-    const userIndex = users?.findIndex((user) => user.login.uuid === updatedUser.login.uuid);
-    if (users && typeof userIndex === 'number' && userIndex > -1) {
-      users[userIndex] = updatedUser;
-      this._localStorageService.setItem(
-        LocalStorageKey.USERS,
-        users
+    if (!updatedUser.login?.uuid) {
+      users!.unshift({
+        ...updatedUser,
+        login: {
+          uuid: `custom-${Date.now()}`,
+        },
+      });
+    } else {
+      const userIndex = users?.findIndex(
+        (user) => user.login?.uuid === updatedUser.login?.uuid
       );
+      if (typeof userIndex === 'number' && userIndex > -1) {
+        users![userIndex] = updatedUser;
+      }
     }
+    this._localStorageService.setItem(LocalStorageKey.USERS, users);
     return of(updatedUser);
   }
 }

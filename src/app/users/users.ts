@@ -16,17 +16,15 @@ export interface User {
     age: number;
   };
   cell: string | null;
-  login: {
-    uuid: string;
+  login?: {
+    uuid: string | null;
   };
 }
 
 export interface UsersResponse {
   results: User[];
   info: {
-    seed: string;
     results: number;
     page: number;
-    version: string;
   };
 }
